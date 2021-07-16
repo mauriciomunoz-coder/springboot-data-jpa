@@ -39,6 +39,7 @@ public class Cliente implements Serializable {
     private Date createAt;
 
 
+    // agrega la fecha actual sin necesidad de poner el campo en el formulario
     /*@PrePersist
     public void prePersisit(){
         createAt = new Date();
