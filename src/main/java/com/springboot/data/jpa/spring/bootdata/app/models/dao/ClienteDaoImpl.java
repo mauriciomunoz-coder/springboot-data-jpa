@@ -17,7 +17,7 @@ public class ClienteDaoImpl implements IClienteDao {
 
 
     @Override
-    @Transactional(readOnly = true)//como es una consulta se pone de solo lectura
+   // @Transactional(readOnly = true)//como es una consulta se pone de solo lectura
     public List findAll() {
         return em.createQuery("from Cliente").getResultList();
     }
@@ -26,7 +26,7 @@ public class ClienteDaoImpl implements IClienteDao {
     //guarda o actualiza cliente segun si tiene id o No, si tiene id es que ya existe y solo modifica
     // si NO tiene id es porque se va a crear y lo guarda en la BD.
     @Override
-    @Transactional
+    //@Transactional
     public void save(Cliente cliente) {
 
         if (cliente.getId() != null && cliente.getId() > 0) {
@@ -39,13 +39,13 @@ public class ClienteDaoImpl implements IClienteDao {
 
 
     //encuentra cliente por id
-    @Transactional(readOnly = true)
+   // @Transactional(readOnly = true)
     @Override
     public Cliente findOne(Long id) {
         return em.find(Cliente.class, id);
     }
 
-    @Transactional
+   // @Transactional
     @Override
     public void delete(Long id) {
         Cliente cliente = findOne(id);

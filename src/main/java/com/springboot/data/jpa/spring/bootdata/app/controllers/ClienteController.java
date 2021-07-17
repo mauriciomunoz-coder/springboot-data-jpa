@@ -3,6 +3,7 @@ package com.springboot.data.jpa.spring.bootdata.app.controllers;
 
 import com.springboot.data.jpa.spring.bootdata.app.models.dao.IClienteDao;
 import com.springboot.data.jpa.spring.bootdata.app.models.entity.Cliente;
+import com.springboot.data.jpa.spring.bootdata.app.models.service.IClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,14 +21,14 @@ public class ClienteController {
 
     // inyectamos la dependencia de IClienteDao
     @Autowired
-    private IClienteDao IClienteDao;
+    private IClienteService iClienteService;
 
 
     //lista los clientes
     @GetMapping(value = "listar")
     public String listar(Model model) {
         model.addAttribute("titulo", "listado de clientes");
-        model.addAttribute("clientes", IClienteDao.findAll());
+        model.addAttribute("clientes", iClienteService.findAll());
         return "listar";
     }
 
@@ -51,7 +52,7 @@ public class ClienteController {
             return "form";
         }
 
-        IClienteDao.save(cliente);
+        iClienteService.save(cliente);
         status.setComplete();
         return "redirect:listar";
     }
@@ -64,7 +65,7 @@ public class ClienteController {
         Cliente cliente = null;
 
         if (id > 0) {
-            cliente = IClienteDao.findOne(id);
+            cliente = iClienteService.findOne(id);
         } else {
             return "redirect:/listar";
         }
@@ -76,7 +77,7 @@ public class ClienteController {
     @GetMapping(value = "/delete/{id}")
     public String delete(@PathVariable(value = "id") Long id) {
         if (id > 0) {
-            IClienteDao.delete(id);
+            iClienteService.delete(id);
         }
         return "redirect:/listar";
     }
