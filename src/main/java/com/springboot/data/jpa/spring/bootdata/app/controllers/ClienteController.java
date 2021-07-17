@@ -18,9 +18,12 @@ import java.util.Map;
 public class ClienteController {
 
 
+    // inyectamos la dependencia de IClienteDao
     @Autowired
     private IClienteDao IClienteDao;
 
+
+    //lista los clientes
     @GetMapping(value = "listar")
     public String listar(Model model) {
         model.addAttribute("titulo", "listado de clientes");
@@ -29,6 +32,7 @@ public class ClienteController {
     }
 
 
+    //redirige al formulario
     @GetMapping(value = "/form")
     public String crear(Map<String, Object> model) {
         Cliente cliente = new Cliente();
@@ -38,6 +42,8 @@ public class ClienteController {
         return "form";
     }
 
+
+    //guarda o modifica un cliente dependiendo de si tiene id o No, "revisar ClienteDaoImpl.java"
     @PostMapping(value = "/guardar")
     public String guardar(@Valid Cliente cliente, BindingResult result, Model model, SessionStatus status) {
         if (result.hasErrors()) {
@@ -50,19 +56,29 @@ public class ClienteController {
         return "redirect:listar";
     }
 
-    @RequestMapping(value = "/form/{id}")
+
+    //redirige al formulario con el cliente encontrado para mostrarlo en los campos
+    @GetMapping(value = "/form/{id}")
     public String editar(@PathVariable(value = "id") Long id, Model model) {
 
         Cliente cliente = null;
 
         if (id > 0) {
-           cliente = IClienteDao.findOne(id);
-        }else{
+            cliente = IClienteDao.findOne(id);
+        } else {
             return "redirect:/listar";
         }
         model.addAttribute("cliente", cliente);
         model.addAttribute("titulo", "Editar Cliente");
         return "form";
+    }
+
+    @GetMapping(value = "/delete/{id}")
+    public String delete(@PathVariable(value = "id") Long id) {
+        if (id > 0) {
+            IClienteDao.delete(id);
+        }
+        return "redirect:/listar";
     }
 
 
