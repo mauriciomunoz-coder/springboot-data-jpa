@@ -1,7 +1,6 @@
 package com.springboot.data.jpa.spring.bootdata.app.controllers;
 
 
-import com.springboot.data.jpa.spring.bootdata.app.models.dao.IClienteDao;
 import com.springboot.data.jpa.spring.bootdata.app.models.entity.Cliente;
 import com.springboot.data.jpa.spring.bootdata.app.models.service.IClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
