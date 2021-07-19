@@ -2,21 +2,14 @@ package com.springboot.data.jpa.spring.bootdata.app.models.dao;
 
 import com.springboot.data.jpa.spring.bootdata.app.models.entity.Cliente;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.List;
 
-public interface IClienteDao extends CrudRepository<Cliente, Long> {
+//se usa PagingAndSortingRepository<Cliente, Long>  para usar la paginacion
+//si no necesitamos paginacion usamos CrudRepository<Cliente, Long>
 
-
-//CrudRepository ya trae estos metodos implementados
-
-//    public List<Cliente> findAll();
-//
-//    public void save(Cliente cliente);
-//
-//    public Cliente findOne(Long id);
-//
-//    public void delete(Long id);
+public interface IClienteDao extends PagingAndSortingRepository<Cliente, Long> {
 
 
 }
