@@ -69,12 +69,9 @@
                 </div>
 
                 <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Foto</label>
+                    <label for="file" class="col-sm-2 col-form-label">Foto</label>
                     <div class="col-sm-6">
-                        <input type="file" th:field="*{foto}" th:errorclass="'form-control alert-danger'"
-                               class="form-control"/>
-                        <small class="form-text text-danger" th:if="${#fields.hasErrors('foto')}"
-                               th:errors="*{foto}"></small>
+                        <input type="file" name="file" id="file" class="form-control" />
                     </div>
                 </div>
 

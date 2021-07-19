@@ -47,7 +47,7 @@ public class ClienteController {
     }
 
     //lista los clientes
-    @GetMapping(value = "listar")
+    @GetMapping(value = "/listar")
     public String listar(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
 
         //**************** codigo de paginacion *************************
@@ -82,9 +82,7 @@ public class ClienteController {
             return "form";
         }
         if (!foto.isEmpty()) {
-
-            Path directorioRecursos = Paths.get("resources//static//uploads");
-            String rootPath = directorioRecursos.toFile().getAbsolutePath();
+            String rootPath = "C://Temp//uploads";
 
             try {
 
