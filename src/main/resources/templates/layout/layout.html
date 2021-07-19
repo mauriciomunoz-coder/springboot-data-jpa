@@ -5,7 +5,7 @@
 
     <meta charset="UTF-8"/>
     <title th:text="'Spring Boot: MVC + Thymeleaf + Data JPA - ' + ${titulo}"></title>
-    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
 
 </head>
 
@@ -28,10 +28,13 @@
             </div>
         </div>
     </nav>
+    <!--    flass messenger-->
+    <div class="alert alert-success" th:if="${success != null}" th:text="${success}"></div>
+    <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
+    <div class="alert alert-warning" th:if="${warning != null}" th:text="${warning}"></div>
+    <div class="alert alert-info" th:if="${info != null}" th:text="${info}"></div>
+    <!-- *********************************************************************** -->
 </header>
-
-
-
 
 
 <footer th:fragment="footer" class="container">
@@ -51,7 +54,6 @@
 <script th:src="@{/js/bootstrap.min.js}"></script>
 <script th:src="@{/js/popper.min.js}"></script>
 <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
-
 
 
 </body>
