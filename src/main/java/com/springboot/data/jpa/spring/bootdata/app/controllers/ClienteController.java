@@ -22,6 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 @SessionAttributes("cliente")
@@ -73,30 +76,39 @@ public class ClienteController {
         return "form";
     }
 
-
+    private final Logger log = LoggerFactory.getLogger(getClass());
     //guarda o modifica un cliente dependiendo de si tiene id o No, "revisar ClienteDaoImpl.java"
     @PostMapping(value = "/guardar")
     public String guardar(@Valid Cliente cliente, BindingResult result, Model model, @RequestParam("file") MultipartFile foto, RedirectAttributes flash, SessionStatus status) {
         if (result.hasErrors()) {
             model.addAttribute("titulo", "Formulario de Cliente");
             return "form";
+
+            //******************** codigo para subir imagenes *******************************************************************
         }
         if (!foto.isEmpty()) {
-            String rootPath = "C://Temp//uploads";
+
+            String uniqueFilename = UUID.randomUUID().toString() + "_" + foto.getOriginalFilename();
+            Path rootPath = Paths.get("uploads").resolve(uniqueFilename);
+
+            Path rootAbsolutPath = rootPath.toAbsolutePath();
+
+            log.info("rootPath: " + rootPath);
+            log.info("rootAbsolutPath: " + rootAbsolutPath);
 
             try {
 
-                byte[] bytes = foto.getBytes();
-                Path rutaCompleta = Paths.get(rootPath + "//" + foto.getOriginalFilename());
-                Files.write(rutaCompleta, bytes);
-                flash.addFlashAttribute("info", "Has subido correctamente '" + foto.getOriginalFilename() + "'");
+                Files.copy(foto.getInputStream(), rootAbsolutPath);
 
-                cliente.setFoto(foto.getOriginalFilename());
+                flash.addFlashAttribute("info", "Has subido correctamente '" + uniqueFilename + "'");
+
+                cliente.setFoto(uniqueFilename);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        //******************************************************************************************************************************************
         String mensajeFlash = (cliente.getId() != null) ? "Cliente editado con éxito!" : "Cliente creado con éxito!"; //verifica si el cliente ya existe o es nuevo y dependiendo saca el mensaje
 
 
