@@ -39,6 +39,9 @@ public class Cliente implements Serializable {
     private Date createAt;
 
 
+    private String foto;
+
+
     // agrega la fecha actual sin necesidad de poner el campo en el formulario
     /*@PrePersist
     public void prePersisit(){
@@ -83,6 +86,15 @@ public class Cliente implements Serializable {
 
     public void setCreateAt(Date createAt) {
         this.createAt = createAt;
+    }
+
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
     }
 
     private static final long serialVersionUID = 1L;
