@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -48,14 +49,14 @@ public class ClienteController {
         Path pathFoto = Paths.get("uploads").resolve(filename).toAbsolutePath();
         Resource recurso = null;
         try {
-             recurso = new UrlResource(pathFoto.toUri());  //carga la imagen para mostrarla en la vista
-             if (!recurso.exists() || !recurso.isReadable()){
-                 throw new RuntimeException("Error: No se puede cargar la imagen! " + pathFoto.toString());
-             }
+            recurso = new UrlResource(pathFoto.toUri());  //carga la imagen para mostrarla en la vista
+            if (!recurso.exists() || !recurso.isReadable()) {
+                throw new RuntimeException("Error: No se puede cargar la imagen! " + pathFoto.toString());
+            }
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+ recurso.getFilename()+"\"").body(recurso);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"").body(recurso);
     }
 
     //****************************************************** fin  codigo *****************************************************
@@ -110,10 +111,23 @@ public class ClienteController {
         if (result.hasErrors()) {
             model.addAttribute("titulo", "Formulario de Cliente");
             return "form";
-
-            //******************** codigo para subir imagenes *******************************************************************
         }
+
+
+        //******************** codigo para subir imagenes *******************************************************************
+
         if (!foto.isEmpty()) {
+ // codigo que elimina la foto anterior cuando se cambia la foto o elimina el cliente  **********************************************************
+            if (cliente.getId() != null && cliente.getId() > 0 && cliente.getFoto() != null && cliente.getFoto().length() > 0) {
+                Path rootPath = Paths.get("uploads").resolve(cliente.getFoto()).toAbsolutePath();
+                File archivo = rootPath.toFile();
+
+                if (archivo.exists() && archivo.canRead()) {
+                    archivo.delete();
+                }
+            }
+            //********* fin codigo que elimina la imagen cuando se cambia la foto o elimina el cliente*************************************************
+
 
             String uniqueFilename = UUID.randomUUID().toString() + "_" + foto.getOriginalFilename();
             Path rootPath = Paths.get("uploads").resolve(uniqueFilename);
@@ -135,7 +149,7 @@ public class ClienteController {
                 e.printStackTrace();
             }
         }
-        //******************************************************************************************************************************************
+        //********************************** fin codigo para cargar foto o imagen ********************************************************************************************************
         String mensajeFlash = (cliente.getId() != null) ? "Cliente editado con éxito!" : "Cliente creado con éxito!"; //verifica si el cliente ya existe o es nuevo y dependiendo saca el mensaje
 
 
@@ -172,8 +186,18 @@ public class ClienteController {
     @GetMapping(value = "/delete/{id}")
     public String delete(@PathVariable(value = "id") Long id, RedirectAttributes flash) {
         if (id > 0) {
+            Cliente cliente = iClienteService.findOne(id);
             iClienteService.delete(id);
             flash.addFlashAttribute("success", "Cliente Eliminado con Exito");
+
+            Path rootPath = Paths.get("uploads").resolve(cliente.getFoto()).toAbsolutePath();
+            File archivo = rootPath.toFile();
+
+            if (archivo.exists() && archivo.canRead()) {
+                if (archivo.delete()) {
+                    flash.addFlashAttribute("info", "Foto " + cliente.getFoto() + "eliminada con exito!");
+                }
+            }
         }
         return "redirect:/listar";
     }
