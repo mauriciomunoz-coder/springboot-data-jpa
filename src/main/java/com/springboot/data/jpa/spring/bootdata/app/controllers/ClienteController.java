@@ -84,7 +84,8 @@ public class ClienteController {
         Pageable pageRequest = PageRequest.of(page, 4);
         Page<Cliente> clientes = iClienteService.findAll(pageRequest);
         PageRender<Cliente> pageRender = new PageRender<>("/listar", clientes);
-        //***************************************************************
+
+        //******************************** fin codigo de paginacion  *******************************
         model.addAttribute("titulo", "listado de clientes");
         model.addAttribute("clientes", clientes);
         model.addAttribute("page", pageRender);
