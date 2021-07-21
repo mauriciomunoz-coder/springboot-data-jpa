@@ -5,9 +5,13 @@ import com.springboot.data.jpa.spring.bootdata.app.models.entity.Cliente;
 import com.springboot.data.jpa.spring.bootdata.app.models.service.IClienteService;
 import com.springboot.data.jpa.spring.bootdata.app.util.paginator.PageRender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,11 +22,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +40,26 @@ public class ClienteController {
     // inyectamos la dependencia de IClienteDao
     @Autowired
     private IClienteService iClienteService;
+
+    //**** este es un metodo alternativo para subir la imagen sin tener que usar la clase MvcConfig.java ***********************
+
+    @GetMapping("/uploads/{filename:.+}") //es la misma ruta que tiene el campo para img de la vista ver
+    public ResponseEntity<Resource> verFoto(@PathVariable String filename) {
+        Path pathFoto = Paths.get("uploads").resolve(filename).toAbsolutePath();
+        Resource recurso = null;
+        try {
+             recurso = new UrlResource(pathFoto.toUri());  //carga la imagen para mostrarla en la vista
+             if (!recurso.exists() || !recurso.isReadable()){
+                 throw new RuntimeException("Error: No se puede cargar la imagen! " + pathFoto.toString());
+             }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+ recurso.getFilename()+"\"").body(recurso);
+    }
+
+    //****************************************************** fin  codigo *****************************************************
+
 
     @GetMapping(value = "/ver/{id}")
     public String ver(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
@@ -77,6 +103,7 @@ public class ClienteController {
     }
 
     private final Logger log = LoggerFactory.getLogger(getClass());
+
     //guarda o modifica un cliente dependiendo de si tiene id o No, "revisar ClienteDaoImpl.java"
     @PostMapping(value = "/guardar")
     public String guardar(@Valid Cliente cliente, BindingResult result, Model model, @RequestParam("file") MultipartFile foto, RedirectAttributes flash, SessionStatus status) {

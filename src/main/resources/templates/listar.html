@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="layout/layout :: head"></head>
 
 <body>
@@ -27,6 +27,7 @@
                         <th>fecha</th>
                         <th>Editar</th>
                         <th>Eliminar</th>
+                        <th>foto</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -40,10 +41,10 @@
                         </td>
                         <td><a class="btn btn-danger btn-xs" th:href="@{/delete/} + ${cliente.id}" th:text="Eliminar"
                                onclick="return confirm('Estas seguro?')"></a></td>
-
                     </tr>
                     </tbody>
                 </table>
+
                 <nav th:replace="paginator/paginator-nav :: paginator"></nav>
             </div>
 
