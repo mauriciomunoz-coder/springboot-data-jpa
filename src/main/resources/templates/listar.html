@@ -25,9 +25,10 @@
                         <th>apellido</th>
                         <th>email</th>
                         <th>fecha</th>
+                        <th>crear factura</th>
                         <th>Editar</th>
                         <th>Eliminar</th>
-                        <th>foto</th>
+
                     </tr>
                     </thead>
                     <tbody>
@@ -38,6 +39,8 @@
                         <td th:text="${cliente.email}"></td>
                         <td th:text="${#dates.format(cliente.createAt,'dd/MM/yyyy')}"></td> <!-- fecha con formato -->
                         <td><a class="btn btn-primary btn-xs" th:href="@{/form/} + ${cliente.id}" th:text="Editar"></a>
+                        </td>
+                        <td><a class="btn btn-success btn-sm" th:href="@{'/factura/form/' + ${cliente.id}}" th:text="'crear factura'"></a>
                         </td>
                         <td><a class="btn btn-danger btn-xs" th:href="@{/delete/} + ${cliente.id}" th:text="Eliminar"
                                onclick="return confirm('Estas seguro?')"></a></td>

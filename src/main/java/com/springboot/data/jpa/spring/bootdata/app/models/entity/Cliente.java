@@ -9,7 +9,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "clientes")
@@ -40,6 +42,14 @@ public class Cliente implements Serializable {
 
 
     private String foto;
+
+
+    @OneToMany(mappedBy = "cliente",fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+    private List<Factura> facturas;
+
+    public Cliente() {
+        facturas = new ArrayList<Factura>();
+    }
 
 
     // agrega la fecha actual sin necesidad de poner el campo en el formulario
@@ -95,6 +105,19 @@ public class Cliente implements Serializable {
 
     public void setFoto(String foto) {
         this.foto = foto;
+    }
+
+    public List<Factura> getFacturas() {
+        return facturas;
+    }
+
+    public void setFacturas(List<Factura> facturas) {
+        this.facturas = facturas;
+    }
+
+    //guarda las facturas es opcional pero recomendado
+    public void addFactura(Factura factura){
+        facturas.add(factura);
     }
 
     private static final long serialVersionUID = 1L;
