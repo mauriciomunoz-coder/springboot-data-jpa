@@ -2,6 +2,7 @@ package com.springboot.data.jpa.spring.bootdata.app.models.entity;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,6 +15,7 @@ public class Factura implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotEmpty
     private String descripcion;
     private String observacion;
     @Temporal(TemporalType.DATE)
@@ -38,6 +40,11 @@ public class Factura implements Serializable {
     public void prePersisit() {
         createAt = new Date();
     }
+
+
+
+
+
 
 
     public Factura() {
@@ -96,6 +103,7 @@ public class Factura implements Serializable {
     public void addItemFactura(ItemFactura itemFactura) {
         this.items.add(itemFactura);
     }
+
 
     public Double getTotal(){
         Double total = 0.0;
