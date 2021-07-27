@@ -181,11 +181,12 @@ public class ClienteController {
     public String delete(@PathVariable(value = "id") Long id, RedirectAttributes flash) {
         if (id > 0) {
 
+            Cliente cliente = iClienteService.findOne(id);
             iClienteService.delete(id);
             flash.addFlashAttribute("success", "Cliente Eliminado con Exito");
 
             //***** codigo para eliminar la foto cuando se cambie la imagen o se elimine el cliente **************************
-            Cliente cliente = iClienteService.findOne(id);
+
             if (iuploadFileService.delete(cliente.getFoto())) {
                 flash.addFlashAttribute("info", "Foto " + cliente.getFoto() + "eliminada con exito!");
             }
