@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:fragment="head">
 
@@ -14,18 +14,37 @@
 
 <header th:fragment="header">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Spring Boot</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
-                    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    <a class="nav-link" th:href="@{/listar}">Clientes</a>
-                </div>
-            </div>
+
+        <a class="navbar-brand" href="#">Spring Boot</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-link active" aria-current="page" href="#">Home</li>
+                <li class="nav-link" th:href="@{/listar}">Clientes</li>
+            </ul>
+            <!-- **************   boton de inicio de session ***************** -->
+            <ul class="navbar-nav navbar-right">
+                <li sec:authorize="!isAuthenticated()"><a
+                        class="btn btn-outline-primary" th:href="@{/login}">Sign In</a></li>
+
+                <li sec:authorize="isAuthenticated()" class="dropdown show">
+                    <a class="btn btn-outline-primary dropdown-toggle" href="#"
+                       role="button" id="dropdownMenuLink" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false"><span sec:authentication="name"></span></a>
+
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <form id="logoutForm" th:action="@{/logout}" method="post">
+                            <button class="dropdown-item" onclick="document.getElementById('logoutForm').submit();"
+                                    type="submit">Sign Out
+                            </button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+        <!--   ************** fin autenticacion ************************ -->
         </div>
     </nav>
     <!--    flass messenger-->
@@ -40,6 +59,10 @@
 <footer th:fragment="footer" class="container">
     <hr/>
     <img th:src="@{/images/spring.png}" alt="Spring logo"/>
+    <p sec:authorize="isAuthenticated()">
+        Usuario Logueado: <span sec:authentication="name"></span> | Roles: <span
+            sec:authentication="principal.authorities"></span>
+    </p>
     <p>
         Powered by <a href="https://projects.spring.io/spring-boot/">Spring
         Boot</a> y <a href="http://www.thymeleaf.org">Thymeleaf</a>.
@@ -55,8 +78,6 @@
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/jquery-ui.min.js}"></script>
 </footer>
-
-
 
 
 </body>

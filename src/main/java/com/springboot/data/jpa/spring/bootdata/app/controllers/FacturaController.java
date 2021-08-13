@@ -8,6 +8,7 @@ import com.springboot.data.jpa.spring.bootdata.app.models.service.IClienteServic
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.util.List;
 
+@Secured("ROLE_ADMIN") //solo el ROL_ADMIN podra acceder a estos metodos
 @Controller
 @RequestMapping("/factura")
 @SessionAttributes("factura") //el nombre con el que se pasa a la vista
@@ -29,7 +31,7 @@ public class FacturaController {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @GetMapping("/form/{clienteId}")
-    public String crear(@PathVariable(value = "clienteId") Long clienteId, Model model, RedirectAttributes flash, SessionStatus status) {
+    public String crear(@PathVariable(value = "clienteId") Long clienteId, Model model, RedirectAttributes flash) {
 
         //encontramos el cliente para poder asignarlo a la factura
         Cliente cliente = iClienteService.findOne(clienteId);

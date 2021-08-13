@@ -18,9 +18,8 @@ public class Factura implements Serializable {
     @NotEmpty
     private String descripcion;
     private String observacion;
+
     @Temporal(TemporalType.DATE)
-
-
     @Column(name = "create_at")
     private Date createAt;
 
@@ -40,10 +39,6 @@ public class Factura implements Serializable {
     public void prePersisit() {
         createAt = new Date();
     }
-
-
-
-
 
 
 

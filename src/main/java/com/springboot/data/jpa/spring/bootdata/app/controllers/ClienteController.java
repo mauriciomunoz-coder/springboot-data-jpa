@@ -5,6 +5,8 @@ import com.springboot.data.jpa.spring.bootdata.app.models.entity.Cliente;
 import com.springboot.data.jpa.spring.bootdata.app.models.service.IClienteService;
 import com.springboot.data.jpa.spring.bootdata.app.models.service.IUploadFileService;
 import com.springboot.data.jpa.spring.bootdata.app.util.paginator.PageRender;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -13,6 +15,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -48,9 +53,13 @@ public class ClienteController {
     @Autowired
     private IUploadFileService iuploadFileService;
 
+    //se usa para encontrar el usuario logueado
+    protected final Log logger = LogFactory.getLog(this.getClass());
+
 
     //**** este es un metodo alternativo para ver la imagen sin tener que usar la clase MvcConfig.java ***********************
 
+    @Secured("ROLE_USER")
     @GetMapping("/uploads/{filename:.+}") //es la misma ruta que tiene el campo para img de la vista ver
     public ResponseEntity<Resource> verFoto(@PathVariable String filename) {
 
@@ -66,7 +75,7 @@ public class ClienteController {
 
     //****************************************************** fin  codigo *****************************************************
 
-
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
     @GetMapping(value = "/ver/{id}")
     public String ver(@PathVariable(value = "id") Long id, Map<String, Object> model, RedirectAttributes flash) {
 
@@ -82,8 +91,19 @@ public class ClienteController {
     }
 
     //lista los clientes
-    @GetMapping(value = "/listar")
-    public String listar(@RequestParam(name = "page", defaultValue = "0") int page, Model model) {
+    @GetMapping(value = {"/listar", "/"})
+    public String listar(@RequestParam(name = "page", defaultValue = "0") int page, Model model, Authentication authentication) {
+
+        // ***********************  encontrar el nombre del usuario autenticado  ***************************
+        if (authentication != null) {
+            logger.info("Hola usuario autenticado tu usuario es: ".concat(authentication.getName()));
+        }
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            logger.info("Utilizando forma estatica Hola usuario autenticado tu usuario es: ".concat(auth.getName()));
+        }
+        //***************** fin codigo usuario autenticado *******************
 
         //**************** codigo de paginacion *************************
         Pageable pageRequest = PageRequest.of(page, 4);
@@ -100,6 +120,7 @@ public class ClienteController {
 
 
     //redirige al formulario
+    @Secured("ROLE_ADMIN")
     @GetMapping(value = "/form")
     public String crear(Map<String, Object> model) {
         Cliente cliente = new Cliente();
@@ -112,6 +133,7 @@ public class ClienteController {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     //guarda o modifica un cliente dependiendo de si tiene id o No, "revisar ClienteDaoImpl.java"
+    @Secured("ROLE_ADMIN")
     @PostMapping(value = "/guardar")
     public String guardar(@Valid Cliente cliente, BindingResult result, Model model, @RequestParam("file") MultipartFile foto, RedirectAttributes flash, SessionStatus status) {
         if (result.hasErrors()) {
@@ -155,6 +177,7 @@ public class ClienteController {
 
 
     //redirige al formulario con el cliente encontrado para mostrarlo en los campos
+    @Secured("ROLE_ADMIN")
     @GetMapping(value = "/form/{id}")
     public String editar(@PathVariable(value = "id") Long id, Model model, RedirectAttributes flash) {
 
@@ -177,6 +200,7 @@ public class ClienteController {
         return "form";
     }
 
+    @Secured("ROLE_ADMIN")
     @GetMapping(value = "/delete/{id}")
     public String delete(@PathVariable(value = "id") Long id, RedirectAttributes flash) {
         if (id > 0) {
